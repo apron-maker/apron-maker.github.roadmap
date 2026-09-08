@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дорожня карта проєктів</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:root { color-scheme: light; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  background: #ffffff;
+  color: #1f2937;
+}
+#app { min-height: 100vh; background: #fff; }
+button, input, select, textarea { font-family: inherit; }
+
+/* ── загальні ─────────────────────────────── */
+.wrap { padding: 24px 20px 48px; max-width: 1000px; margin: 0 auto; }
+.eyebrow { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #9ca3af; font-weight: 600; }
+h1.t { font-size: 24px; font-weight: 800; margin: 4px 0 16px; letter-spacing: -.3px; }
+.back { background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; }
+.inp { font-size: 12.5px; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 7px; outline: none; background: #fff; color: #1f2937; }
+.inp:focus { border-color: #93c5fd; }
+.primary { font-size: 13px; font-weight: 700; padding: 9px 16px; border: none; border-radius: 8px; background: #111827; color: #fff; cursor: pointer; }
+.primary:hover { background: #000; }
+.btn { font-size: 12px; font-weight: 600; padding: 7px 12px; border: 1px solid #d1d5db; border-radius: 7px; background: #fff; color: #374151; cursor: pointer; }
+.btn:hover { background: #f9fafb; }
+.danger { font-size: 12px; font-weight: 700; padding: 7px 14px; border: none; border-radius: 7px; background: #b91c1c; color: #fff; cursor: pointer; }
+.danger[disabled] { background: #9ca3af; cursor: default; }
+.xbtn { cursor: pointer; border: none; background: transparent; color: #9ca3af; font-size: 14px; line-height: 1; padding: 0 3px; }
+.xbtn:hover { color: #dc2626; }
+.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; border-radius: 8px; padding: 8px 12px; font-size: 11.5px; margin-bottom: 16px; }
+
+/* ── картки бібліотеки ────────────────────── */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; cursor: pointer; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.04); transition: box-shadow .12s; }
+.card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.10); }
+.card .nm { font-weight: 800; font-size: 14px; line-height: 1.3; }
+.card .sub { font-size: 11.5px; color: #6b7280; margin-top: 10px; }
+.card .sub2 { font-size: 10.5px; color: #9ca3af; margin-top: 2px; }
+.delx { border: none; background: transparent; color: #cbd5e1; font-size: 16px; line-height: 1; cursor: pointer; padding: 0 2px; }
+.delx:hover { color: #dc2626; }
+.empty { color: #9ca3af; font-size: 13px; }
+
+/* ── редактор ─────────────────────────────── */
+.ed { padding: 20px 16px 28px; }
+.hrow { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.mapname { font-size: 20px; font-weight: 800; letter-spacing: -.3px; border: none; border-bottom: 1px dashed transparent; outline: none; padding: 1px 0; max-width: 460px; background: transparent; color: #1f2937; }
+.mapname:focus { border-bottom-color: #cbd5e1; }
+.saved { font-size: 10.5px; color: #9ca3af; font-weight: 600; }
+.hint { font-size: 11.5px; color: #6b7280; margin-bottom: 12px; line-height: 1.5; }
+.lbl { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #374151; }
+
+#rmwrap { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 12px; }
+#rmcontent { position: relative; }
+.mband { display: flex; height: 30px; }
+.mcell { display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; color: #374151; background: #fafafa; }
+.mcell.alt { background: #f3f4f6; }
+.wband { display: flex; height: 38px; border-top: 1px solid #f1f3f5; }
+.wcell { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; }
+.wn { font-size: 11.5px; font-weight: 700; color: #374151; }
+.wd { font-size: 9.5px; color: #9ca3af; font-weight: 500; }
+.lhead { display: flex; align-items: center; gap: 8px; border-top: 1px solid #e5e7eb; padding: 5px 10px; }
+.lname { font-size: 12.5px; font-weight: 800; cursor: text; }
+.swatch { width: 16px; height: 16px; border-radius: 4px; cursor: pointer; position: relative; flex-shrink: 0; display: inline-block; }
+.swatch input { opacity: 0; width: 16px; height: 16px; position: absolute; inset: 0; cursor: pointer; }
+.tl { position: relative; transition: background .1s; }
+.tlgrid { position: absolute; inset: 0; display: flex; }
+.tlgrid > div { flex: 1; }
+
+.bar { position: absolute; min-height: 26px; padding: 4px 20px 4px 7px; border-radius: 6px; color: #fff; font-size: 10.8px; font-weight: 600; line-height: 1.3; white-space: normal; word-break: break-word; cursor: grab; box-shadow: 0 1px 2px rgba(0,0,0,.14); touch-action: none; }
+.bar.sel { box-shadow: 0 0 0 2px #111827, 0 0 0 4px #e5e7eb; }
+.bar .code { display: inline-block; background: rgba(255,255,255,.22); border-radius: 4px; padding: 0 4px; font-weight: 800; font-size: 9.5px; margin-right: 5px; letter-spacing: .3px; }
+.bar .dep { margin-left: 5px; opacity: .85; font-size: 9.5px; font-weight: 700; }
+.grip { position: absolute; top: 0; height: 100%; width: 11px; display: flex; align-items: center; justify-content: center; cursor: ew-resize; touch-action: none; z-index: 3; }
+.grip i { width: 2px; height: 12px; border-radius: 2px; background: rgba(255,255,255,.75); display: block; }
+.barx { position: absolute; top: 2px; right: 3px; width: 15px; height: 15px; border-radius: 4px; border: none; background: rgba(0,0,0,.18); color: #fff; font-size: 11px; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 4; }
+.bar:hover .barx { display: flex; }
+body.dragging { user-select: none; }
+body.dragging .bar { cursor: grabbing; }
+
+/* ── картка набутку / форми ───────────────── */
+.panel { margin-top: 16px; border: 1px solid #d1d5db; border-radius: 12px; padding: 14px 16px; background: #fafafa; }
+.panel .head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.pill { color: #fff; border-radius: 5px; padding: 2px 7px; font-size: 11px; font-weight: 800; }
+.frow { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 14px; }
+.field { display: flex; flex-direction: column; gap: 4px; flex: 0 0 auto; }
+.field.grow { flex: 1 1 240px; }
+.cap { font-size: 10.5px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .4px; }
+.addrow { margin-top: 14px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.chip { display: inline-flex; align-items: center; gap: 5px; background: #eef2f7; border: 1px solid #d8e0ea; border-radius: 999px; padding: 3px 6px 3px 8px; font-size: 11px; }
+.chip .nm { max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.depbox { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; padding: 6px; border: 1px solid #d1d5db; border-radius: 8px; background: #fff; min-height: 40px; align-items: center; }
+.depbox input { flex: 1 1 120px; min-width: 120px; border: none; outline: none; font-size: 12.5px; padding: 4px 2px; background: transparent; }
+.dropdown { position: absolute; left: 0; right: 0; top: 100%; margin-top: 4px; background: #fff; border: 1px solid #d1d5db; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.12); z-index: 30; overflow: hidden; max-height: 260px; overflow-y: auto; }
+.dropdown .it { padding: 8px 10px; display: flex; gap: 8px; align-items: center; cursor: pointer; border-bottom: 1px solid #f1f3f5; font-size: 12.5px; }
+.dropdown .it:hover { background: #f3f4f6; }
+.dropdown .it b { font-size: 11px; color: #475569; min-width: 30px; }
+.cfg { margin-top: 14px; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; }
+.cfg textarea { width: 100%; height: 180px; font-family: ui-monospace, monospace; font-size: 11px; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; resize: vertical; }
+.err { color: #dc2626; font-size: 11.5px; margin-top: 6px; }
+
+@media print {
+  .noprint { display: none !important; }
+  #rmwrap { overflow: visible !important; border: none !important; }
+  @page { margin: 8mm; }
+}
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function () {
+"use strict";
+
+/* ═══════════ дані та константи ═══════════ */
+const PALETTE = [
+  { bar: "#2B6CB0", line: "#1E4E7E", soft: "#E8F0F8" },
+  { bar: "#2F8F4E", line: "#226B3A", soft: "#E8F4EC" },
+  { bar: "#C0392B", line: "#922A20", soft: "#F8E9E7" },
+  { bar: "#7C3AED", line: "#5B21B6", soft: "#F1EBFB" },
+  { bar: "#0E7C86", line: "#0A5A61", soft: "#E4F3F4" },
+  { bar: "#D97706", line: "#92500A", soft: "#FBF0E2" },
+  { bar: "#BE185D", line: "#831843", soft: "#FAE7F0" },
+  { bar: "#475569", line: "#334155", soft: "#EEF1F4" }
+];
+const MONTHS_UA = ["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"];
+
+const pad = n => String(n).padStart(2, "0");
+const pad3 = n => String(n).padStart(3, "0");
+const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+const addDays = (d, n) => { const r = new Date(d); r.setDate(r.getDate() + n); return r; };
+const two = pad;
+const fmtTime = ts => { if (!ts) return ""; const d = new Date(ts); return two(d.getDate()) + "." + two(d.getMonth() + 1) + " " + two(d.getHours()) + ":" + two(d.getMinutes()); };
+const fmtDate = ts => { if (!ts) return ""; const d = new Date(ts); return two(d.getDate()) + "." + two(d.getMonth() + 1) + "." + d.getFullYear(); };
+const plural = (n, a, b, c) => { n = Math.abs(n) % 100; const n1 = n % 10; if (n > 10 && n < 20) return c; if (n1 > 1 && n1 < 5) return b; if (n1 === 1) return a; return c; };
+const curMonth = () => { const d = new Date(); return d.getFullYear() + "-" + two(d.getMonth() + 1); };
+const startLabel = s => { if (typeof s !== "string" || !/^\d{4}-\d{2}$/.test(s)) return ""; const p = s.split("-"); return MONTHS_UA[(+p[1]) - 1] + " " + p[0]; };
+const newId = () => Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4);
+
+function baseFromStart(start) {
+  let y = 2026, m = 6;
+  if (typeof start === "string" && /^\d{4}-\d{2}$/.test(start)) { const p = start.split("-"); y = +p[0]; m = +p[1] - 1; }
+  const first = new Date(y, m, 1);
+  return addDays(first, -(((first.getDay() + 6) % 7)));
+}
+function weekMeta(k, base) {
+  const s = addDays(base, (k - 1) * 7), e = addDays(s, 4);
+  const dates = s.getMonth() === e.getMonth()
+    ? pad(s.getDate()) + "–" + pad(e.getDate()) + "." + pad(e.getMonth() + 1)
+    : pad(s.getDate()) + "." + pad(s.getMonth() + 1) + "–" + pad(e.getDate()) + "." + pad(e.getMonth() + 1);
+  return { month: MONTHS_UA[s.getMonth()], dates: dates };
+}
+
+const INIT_LANES = [
+  Object.assign({ id: "YOD",  name: "ЙОД" }, PALETTE[0]),
+  Object.assign({ id: "AVR",  name: "АВР" }, PALETTE[1]),
+  Object.assign({ id: "EDEM", name: "ЕДЕМ (Замовник)" }, PALETTE[2])
+];
+const RAW = [
+  { id: "y1", laneId: "YOD",  name: "Концепція проєкту (експлікації + назви)", start: 1, end: 1, deps: [] },
+  { id: "a1", laneId: "AVR",  name: "Аудит №1: норми + ТЗ", start: 1, end: 1, deps: ["y1"] },
+  { id: "e1", laneId: "EDEM", name: "Вивчення звіту аудиту №1", start: 2, end: 2, deps: ["a1"] },
+  { id: "a2", laneId: "AVR",  name: "Загальний аналіз + висновки КБ", start: 2, end: 3, deps: ["a1"] },
+  { id: "a3", laneId: "AVR",  name: "Інженерна концепція (≈1 міс)", start: 2, end: 5, deps: ["a1"] },
+  { id: "y2", laneId: "YOD",  name: "Коригування №1 (за звітом аудиту)", start: 3, end: 3, deps: ["e1"] },
+  { id: "a4", laneId: "AVR",  name: "Аудит №2 (повторний)", start: 4, end: 4, deps: ["y2"] },
+  { id: "e2", laneId: "EDEM", name: "Участь у повторному аудиті №2", start: 4, end: 4, deps: ["y2"] },
+  { id: "y3", laneId: "YOD",  name: "Коригування №2 (за зауваженнями)", start: 5, end: 5, deps: ["a4"] },
+  { id: "a5", laneId: "AVR",  name: "Набір основної моделі", start: 6, end: 6, deps: ["y3"] },
+  { id: "a6", laneId: "AVR",  name: "Конструктивна концепція (КБ)", start: 7, end: 8, deps: ["a5"] },
+  { id: "a7", laneId: "AVR",  name: "Перший фітбек КБ: конструктивна схема", start: 7, end: 7, deps: ["a6"] },
+  { id: "a8", laneId: "AVR",  name: "АР: коментарі КБ + узгодження з ЙОД", start: 8, end: 8, deps: ["a7", "a3"] }
+];
+const INIT_TASKS = RAW.map((t, i) => Object.assign({}, t, { code: pad3(i + 1) }));
+
+const WEEK_MIN = 96, PAD_T = 8, GAP = 6;
+const defaultMapData = () => ({ N: 9, start: curMonth(), lanes: INIT_LANES.map(l => Object.assign({}, l)), tasks: [] });
+
+/* ═══════════ сховище ═══════════ */
+const _mem = {};
+let hasStore = false;
+try { localStorage.setItem("rm2:test", "1"); localStorage.removeItem("rm2:test"); hasStore = true; } catch (e) { hasStore = false; }
+function sGet(k) { if (!hasStore) return (k in _mem) ? _mem[k] : null; try { return localStorage.getItem(k); } catch (e) { return null; } }
+function sSet(k, v) { if (!hasStore) { _mem[k] = v; return; } try { localStorage.setItem(k, v); } catch (e) { _mem[k] = v; } }
+function sDel(k) { delete _mem[k]; if (!hasStore) return; try { localStorage.removeItem(k); } catch (e) {} }
+const getJSON = k => { const v = sGet(k); if (v == null) return null; try { return JSON.parse(v); } catch (e) { return null; } };
+const setJSON = (k, o) => sSet(k, JSON.stringify(o));
+const IDX = "rm2:index";
+const PKEY = id => "rm2:proj:" + id;
+
+/* ═══════════ dom-хелпер ═══════════ */
+function h(tag, props) {
+  const el = document.createElement(tag);
+  if (props) for (const k in props) {
+    const v = props[k];
+    if (v == null || v === false) continue;
+    if (k === "style") Object.assign(el.style, v);
+    else if (k === "class") el.className = v;
+    else if (k.slice(0, 2) === "on") el.addEventListener(k.slice(2).toLowerCase(), v);
+    else if (k === "text") el.textContent = v;
+    else if (k in el && k !== "list") { try { el[k] = v; } catch (e) { el.setAttribute(k, v); } }
+    else el.setAttribute(k, v);
+  }
+  for (let i = 2; i < arguments.length; i++) {
+    const kid = arguments[i];
+    if (kid == null || kid === false) continue;
+    const arr = Array.isArray(kid) ? kid : [kid];
+    for (const c of arr) { if (c == null || c === false) continue; el.appendChild(c instanceof Node ? c : document.createTextNode(String(c))); }
+  }
+  return el;
+}
+const app = () => document.getElementById("app");
+
+/* ═══════════ стан застосунку ═══════════ */
+let projects = [], proj = null, mapId = null, savedAt = 0;
+let ed = null;                 // стан редактора
+let barEls = {}, laneEls = {}; // посилання на елементи
+let dragRef = null;
+let saveTimer = null, lastSaved = "";
+
+/* ═══════════ бібліотека ═══════════ */
+function boot() {
+  let idx = getJSON(IDX);
+  if (!idx || !Array.isArray(idx.projects) || idx.projects.length === 0) {
+    const pid = newId(), mid = newId(), now = Date.now();
+    const project = { id: pid, name: "АВР — приклад", createdAt: now, updatedAt: now,
+      maps: [{ id: mid, name: "Дорожня карта", createdAt: now, updatedAt: now,
+        data: { N: 9, start: "2026-07", lanes: INIT_LANES.map(l => Object.assign({}, l)), tasks: INIT_TASKS.map(t => Object.assign({}, t)) } }] };
+    setJSON(PKEY(pid), project);
+    idx = { projects: [{ id: pid, name: project.name, createdAt: now, updatedAt: now, maps: 1 }] };
+    setJSON(IDX, idx);
+  }
+  projects = idx.projects;
+  renderLib();
+}
+const saveIndex = list => { projects = list; setJSON(IDX, { projects: list }); };
+const bumpIndex = np => saveIndex(projects.map(p => p.id === np.id ? Object.assign({}, p, { name: np.name, updatedAt: np.updatedAt, maps: np.maps.length }) : p));
+
+function renderLib() {
+  ed = null;
+  const box = h("div", { class: "wrap" });
+  box.appendChild(h("div", { class: "eyebrow" }, "Бібліотека"));
+  box.appendChild(h("h1", { class: "t" }, "Проєкти та їх дорожні карти"));
+  if (!hasStore) box.appendChild(h("div", { class: "warn" }, "Постійне збереження недоступне в цьому середовищі — зміни зберігаються лише до перезавантаження сторінки."));
+
+  const inp = h("input", { class: "inp", placeholder: "Назва нового проєкту…", style: { flex: "1 1 280px", maxWidth: "380px" } });
+  const create = () => {
+    const name = (inp.value || "").trim() || "Новий проєкт";
+    const id = newId(), now = Date.now();
+    const project = { id: id, name: name, createdAt: now, updatedAt: now, maps: [] };
+    setJSON(PKEY(id), project);
+    saveIndex([{ id: id, name: name, createdAt: now, updatedAt: now, maps: 0 }].concat(projects));
+    proj = project; renderProject();
+  };
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") create(); });
+  box.appendChild(h("div", { style: { display: "flex", gap: "8px", marginBottom: "22px", flexWrap: "wrap" } },
+    inp, h("button", { class: "primary", onclick: create }, "+ Створити проєкт")));
+
+  const grid = h("div", { class: "grid" });
+  if (projects.length === 0) grid.appendChild(h("div", { class: "empty" }, "Ще немає проєктів. Створи перший вище."));
+  projects.forEach(p => {
+    const card = h("div", { class: "card", onclick: () => { const pr = getJSON(PKEY(p.id)); if (pr) { proj = pr; renderProject(); } } },
+      h("div", { style: { display: "flex", justifyContent: "space-between", gap: "8px", alignItems: "flex-start" } },
+        h("div", { class: "nm" }, p.name),
+        h("button", { class: "delx", title: "Видалити проєкт", onclick: e => { e.stopPropagation(); if (!confirm("Видалити проєкт «" + p.name + "» разом з картами?")) return; sDel(PKEY(p.id)); saveIndex(projects.filter(x => x.id !== p.id)); renderLib(); } }, "×")),
+      h("div", { class: "sub" }, (p.maps || 0) + " " + plural(p.maps || 0, "карта", "карти", "карт")),
+      h("div", { class: "sub2" }, "Оновлено " + fmtDate(p.updatedAt)));
+    grid.appendChild(card);
+  });
+  box.appendChild(grid);
+  app().replaceChildren(box);
+}
+
+/* ═══════════ проєкт ═══════════ */
+function renderProject() {
+  ed = null; mapId = null;
+  const box = h("div", { class: "wrap" });
+  box.appendChild(h("button", { class: "back", onclick: () => { proj = null; renderLib(); } }, "← Бібліотека"));
+  box.appendChild(h("h1", { class: "t", style: { margin: "8px 0 4px" } }, proj.name));
+  box.appendChild(h("div", { style: { fontSize: "11.5px", color: "#9ca3af", marginBottom: "18px" } },
+    proj.maps.length + " " + plural(proj.maps.length, "карта", "карти", "карт")));
+  box.appendChild(h("button", { class: "primary", style: { marginBottom: "22px" }, onclick: createMap }, "+ Створити карту"));
+
+  const grid = h("div", { class: "grid" });
+  if (proj.maps.length === 0) grid.appendChild(h("div", { class: "empty" }, "У цьому проєкті ще немає карт."));
+  proj.maps.forEach(m => {
+    const d = m.data || {};
+    const swatches = h("div", { style: { display: "flex", gap: "4px", marginTop: "10px" } });
+    (d.lanes || []).slice(0, 8).forEach(l => swatches.appendChild(h("span", { style: { width: "14px", height: "8px", borderRadius: "2px", background: l.bar } })));
+    grid.appendChild(h("div", { class: "card", onclick: () => openMap(m.id) },
+      h("div", { style: { display: "flex", justifyContent: "space-between", gap: "8px", alignItems: "flex-start" } },
+        h("div", { class: "nm" }, m.name),
+        h("button", { class: "delx", title: "Видалити карту", onclick: e => { e.stopPropagation(); if (!confirm("Видалити карту «" + m.name + "»?")) return; delMap(m.id); } }, "×")),
+      swatches,
+      h("div", { style: { fontSize: "11px", color: "#6b7280", marginTop: "8px" } },
+        "С" + (d.N || 0) + " · " + (d.lanes || []).length + " ліній · " + (d.tasks || []).length + " етапів"),
+      d.start ? h("div", { class: "sub2" }, "старт: " + startLabel(d.start)) : null,
+      h("div", { class: "sub2" }, "Оновлено " + fmtTime(m.updatedAt))));
+  });
+  box.appendChild(grid);
+  app().replaceChildren(box);
+}
+
+function createMap() {
+  const id = newId(), now = Date.now();
+  const map = { id: id, name: "Нова карта", createdAt: now, updatedAt: now, data: defaultMapData() };
+  proj = Object.assign({}, proj, { updatedAt: now, maps: [map].concat(proj.maps) });
+  setJSON(PKEY(proj.id), proj); bumpIndex(proj);
+  lastSaved = JSON.stringify(map.data); mapId = id; savedAt = now;
+  renderEditor(map);
+}
+function openMap(id) {
+  const m = proj.maps.find(x => x.id === id); if (!m) return;
+  lastSaved = JSON.stringify(m.data); mapId = id; savedAt = m.updatedAt || 0;
+  renderEditor(m);
+}
+function delMap(id) {
+  proj = Object.assign({}, proj, { updatedAt: Date.now(), maps: proj.maps.filter(m => m.id !== id) });
+  setJSON(PKEY(proj.id), proj); bumpIndex(proj); renderProject();
+}
+function flush() {
+  if (!ed || !proj || !mapId) return;
+  const data = { N: ed.N, start: ed.start, lanes: ed.lanes, tasks: ed.tasks };
+  const js = JSON.stringify(data);
+  if (js === lastSaved) return;
+  lastSaved = js;
+  const now = Date.now();
+  proj = Object.assign({}, proj, { updatedAt: now, maps: proj.maps.map(m => m.id === mapId ? Object.assign({}, m, { data: data, updatedAt: now }) : m) });
+  setJSON(PKEY(proj.id), proj); bumpIndex(proj); savedAt = now;
+  const el = document.getElementById("savedAt"); if (el) el.textContent = "Збережено · " + fmtTime(now);
+}
+function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(flush, 400); }
+window.addEventListener("beforeunload", flush);
+
+/* ═══════════ редактор ═══════════ */
+function taskById(id) { return ed.tasks.find(t => t.id === id); }
+function succMap() { const m = {}; for (const t of ed.tasks) for (const p of (t.deps || [])) (m[p] = m[p] || []).push(t.id); return m; }
+function descendants(id) {
+  const succ = succMap(), s = new Set(), st = (succ[id] || []).slice();
+  while (st.length) { const x = st.pop(); if (s.has(x)) continue; s.add(x); for (const y of (succ[x] || [])) st.push(y); }
+  return s;
+}
+const nextCode = ts => { let mx = 0; for (const t of ts) { const n = parseInt(String(t.code).replace(/\D/g, ""), 10); if (!isNaN(n)) mx = Math.max(mx, n); } return pad3(mx + 1); };
+
+function renderEditor(map) {
+  ed = {
+    N: (map.data && map.data.N) || 9,
+    start: (map.data && map.data.start) || curMonth(),
+    lanes: JSON.parse(JSON.stringify((map.data && map.data.lanes) || INIT_LANES)),
+    tasks: JSON.parse(JSON.stringify((map.data && map.data.tasks) || [])),
+    selected: null,
+    form: { laneId: null, name: "", start: 1, dur: 1 },
+    editLane: null,
+    showCfg: false
+  };
+  if (!ed.form.laneId) ed.form.laneId = ed.lanes[0] ? ed.lanes[0].id : null;
+
+  const root = h("div", { class: "ed" });
+
+  /* — шапка — */
+  const nameInp = h("input", { class: "mapname noprint", value: map.name || "", placeholder: "Назва карти" });
+  nameInp.addEventListener("input", () => {
+    const now = Date.now();
+    proj = Object.assign({}, proj, { updatedAt: now, maps: proj.maps.map(m => m.id === mapId ? Object.assign({}, m, { name: nameInp.value, updatedAt: now }) : m) });
+    setJSON(PKEY(proj.id), proj); bumpIndex(proj);
+  });
+
+  const startInp = h("input", { class: "inp", type: "month", value: ed.start, style: { fontSize: "12px", padding: "6px 8px" } });
+  startInp.addEventListener("change", () => { ed.start = startInp.value || ed.start; renderGantt(); scheduleSave(); });
+
+  const expBtn = h("button", { class: "danger", onclick: () => exportPDF(expBtn) }, "Експорт PDF");
+
+  const left = h("div", { class: "noprint", style: { display: "flex", flexDirection: "column", gap: "3px", flex: "1 1 260px", minWidth: "240px" } },
+    h("button", { class: "back", style: { alignSelf: "flex-start" }, onclick: () => { flush(); renderProject(); } }, "← " + proj.name),
+    nameInp,
+    h("span", { class: "saved", id: "savedAt" }, savedAt ? "Збережено · " + fmtTime(savedAt) : "Чернетка"));
+
+  const controls = h("div", { class: "noprint", style: { display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" } },
+    h("label", { class: "lbl" }, "Старт", startInp),
+    h("button", { class: "btn", onclick: () => { addLane(); } }, "+ Лінія"),
+    h("button", { class: "btn", onclick: () => { ed.N += 1; renderGantt(); scheduleSave(); } }, "+ спринт"),
+    h("button", { class: "btn", onclick: () => { ed.N += 4; renderGantt(); scheduleSave(); } }, "+ місяць"),
+    h("button", { class: "btn", onclick: () => { ed.N = Math.max(1, ed.N - 1); clampAll(); renderGantt(); scheduleSave(); } }, "− спринт"),
+    h("button", { class: "btn", onclick: toggleCfg }, "Конфіг"),
+    expBtn);
+
+  root.appendChild(h("div", { class: "hrow" }, left, controls));
+  root.appendChild(h("div", { class: "hint noprint" },
+    "Клік на плашку — відкрити картку набутку (там зв'язки) · тягни плашку: вбік — час, вгору/вниз — інша лінія · правий тягарець — тривалість. Етапи в одній лінії автоматично стають в один рядок, якщо не накладаються в часі."));
+
+  root.appendChild(h("div", { id: "rmwrap" }, h("div", { id: "rmcontent" })));
+  root.appendChild(h("div", { id: "cardHost" }));
+  root.appendChild(buildAddRow());
+  root.appendChild(h("div", { id: "cfgHost" }));
+
+  app().replaceChildren(root);
+  renderGantt();
+  observeResize();
+}
+
+function clampAll() {
+  ed.tasks = ed.tasks.map(t => {
+    const s = clamp(t.start, 1, ed.N), e = clamp(t.end, s, ed.N);
+    return Object.assign({}, t, { start: s, end: e });
+  });
+}
+
+/* — гант — */
+function renderGantt() {
+  const c = document.getElementById("rmcontent");
+  if (!c) return;
+  c.replaceChildren();
+  c.style.minWidth = (ed.N * WEEK_MIN) + "px";
+
+  const base = baseFromStart(ed.start);
+  const weeks = Array.from({ length: ed.N }, (_, i) => Object.assign({ i: i + 1 }, weekMeta(i + 1, base)));
+  const spans = [];
+  for (const w of weeks) { const l = spans[spans.length - 1]; if (l && l.month === w.month) l.span += 1; else spans.push({ month: w.month, span: 1 }); }
+  ed.weeks = weeks; ed.monthSpans = spans;
+
+  const mb = h("div", { class: "mband" });
+  spans.forEach((m, i) => mb.appendChild(h("div", {
+    class: "mcell" + (i % 2 ? " alt" : ""),
+    style: { flex: String(m.span), minWidth: (m.span * WEEK_MIN) + "px", borderLeft: i ? "1px solid #d1d5db" : "none" }
+  }, m.month)));
+  c.appendChild(mb);
+
+  const wb = h("div", { class: "wband" });
+  weeks.forEach((w, i) => wb.appendChild(h("div", {
+    class: "wcell", style: { minWidth: WEEK_MIN + "px", borderLeft: i ? "1px solid #eef0f2" : "none" }
+  }, h("span", { class: "wn" }, "С" + w.i), h("span", { class: "wd" }, w.dates))));
+  c.appendChild(wb);
+
+  barEls = {}; laneEls = {};
+  ed.lanes.forEach((lane, li) => {
+    /* заголовок лінії */
+    const colorInp = h("input", { type: "color", value: lane.bar });
+    colorInp.addEventListener("input", () => { lane.bar = colorInp.value; lane.line = colorInp.value; renderGantt(); scheduleSave(); });
+    const swatch = h("label", { class: "swatch", title: "Колір лінії", style: { background: lane.bar } }, colorInp);
+
+    let nameNode;
+    if (ed.editLane === lane.id) {
+      const inp = h("input", { class: "inp", value: lane.name, style: { fontSize: "12.5px", fontWeight: "700", padding: "3px 6px" } });
+      inp.addEventListener("blur", () => { lane.name = inp.value.trim() || lane.name; ed.editLane = null; renderGantt(); refreshLaneSelects(); scheduleSave(); });
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") inp.blur(); });
+      nameNode = inp;
+      setTimeout(() => inp.focus(), 0);
+    } else {
+      nameNode = h("span", { class: "lname", title: "Подвійний клік — перейменувати", style: { color: lane.line },
+        ondblclick: () => { ed.editLane = lane.id; renderGantt(); } }, lane.name);
+    }
+
+    const head = h("div", { class: "lhead", style: { background: lane.soft || "#f3f4f6" } },
+      swatch, nameNode, h("span", { style: { flex: "1" } }),
+      h("button", { class: "xbtn", title: "Вгору", style: { fontSize: "12px" }, onclick: () => moveLane(li, -1) }, "▲"),
+      h("button", { class: "xbtn", title: "Вниз", style: { fontSize: "12px" }, onclick: () => moveLane(li, 1) }, "▼"),
+      h("button", { class: "xbtn", title: "Видалити лінію", onclick: () => delLane(lane.id) }, "×"));
+    c.appendChild(head);
+
+    /* смуга часу */
+    const tl = h("div", { class: "tl" });
+    tl.dataset.laneId = lane.id;
+    const grid = h("div", { class: "tlgrid" });
+    weeks.forEach((w, i) => grid.appendChild(h("div", { style: { minWidth: WEEK_MIN + "px", borderLeft: i ? "1px solid #f1f3f5" : "none" } })));
+    tl.appendChild(grid);
+
+    ed.tasks.filter(t => t.laneId === lane.id).forEach(t => tl.appendChild(buildBar(t, lane)));
+    laneEls[lane.id] = tl;
+    c.appendChild(tl);
+  });
+
+  layout();
+  renderCard();
+}
+
+function pctL(s) { return ((s - 1) / ed.N) * 100; }
+function pctW(s, e) { return ((e - s + 1) / ed.N) * 100; }
+
+function buildBar(t, lane) {
+  const depN = (t.deps || []).length;
+  const bar = h("div", {
+    class: "bar" + (ed.selected === t.id ? " sel" : ""),
+    style: {
+      top: PAD_T + "px", left: pctL(t.start) + "%", width: "calc(" + pctW(t.start, t.end) + "% - 6px)",
+      background: lane.bar, borderLeft: "3px solid " + lane.line
+    }
+  },
+    h("span", { class: "code" }, t.code),
+    document.createTextNode(t.name),
+    depN > 0 ? h("span", { class: "dep", title: "Залежить від " + depN }, "↳" + depN) : null);
+
+  const del = h("button", { class: "barx", title: "Видалити" }, "×");
+  del.addEventListener("pointerdown", e => e.stopPropagation());
+  del.addEventListener("click", e => { e.stopPropagation(); delTask(t.id); });
+  bar.appendChild(del);
+
+  const gl = h("div", { class: "grip", style: { left: "0" } }, h("i"));
+  const gr = h("div", { class: "grip", style: { right: "0" }, title: "Тривалість" }, h("i"));
+  gl.addEventListener("pointerdown", e => startDrag(e, t, "start"));
+  gr.addEventListener("pointerdown", e => startDrag(e, t, "end"));
+  bar.appendChild(gl); bar.appendChild(gr);
+
+  bar.addEventListener("pointerdown", e => {
+    ed.selected = t.id; highlightSelection(); renderCard();
+    startDrag(e, t, "move");
+  });
+  barEls[t.id] = bar;
+  return bar;
+}
+
+function highlightSelection() {
+  for (const id in barEls) barEls[id].classList.toggle("sel", id === ed.selected);
+}
+
+function layout() {
+  for (const lane of ed.lanes) {
+    const list = ed.tasks.filter(t => t.laneId === lane.id).slice().sort((a, b) => a.start - b.start || a.end - b.end);
+    const rowsEnd = [], rowOf = {};
+    for (const t of list) {
+      let r = rowsEnd.findIndex(e => t.start > e);
+      if (r === -1) { r = rowsEnd.length; rowsEnd.push(t.end); } else rowsEnd[r] = t.end;
+      rowOf[t.id] = r;
+    }
+    const rowH = [];
+    for (const t of list) { const el = barEls[t.id]; const hh = el ? el.offsetHeight : 28; const r = rowOf[t.id]; rowH[r] = Math.max(rowH[r] || 0, hh); }
+    const rowTop = []; let acc = PAD_T;
+    for (let r = 0; r < rowH.length; r++) { rowTop[r] = acc; acc += (rowH[r] || 28) + GAP; }
+    for (const t of list) if (barEls[t.id]) barEls[t.id].style.top = rowTop[rowOf[t.id]] + "px";
+    if (laneEls[lane.id]) laneEls[lane.id].style.height = Math.max(acc - GAP + PAD_T, 36) + "px";
+  }
+}
+
+let ro = null, lastW = 0;
+function observeResize() {
+  const el = document.getElementById("rmcontent");
+  if (!el || !window.ResizeObserver) return;
+  if (ro) ro.disconnect();
+  lastW = el.offsetWidth;
+  ro = new ResizeObserver(() => {
+    const w = el.offsetWidth;
+    if (Math.abs(w - lastW) > 1) { lastW = w; layout(); }
+  });
+  ro.observe(el);
+}
+
+/* — перетягування — */
+function startDrag(e, t, mode) {
+  if (ed.editLane) return;
+  e.preventDefault(); e.stopPropagation();
+  const tl = laneEls[t.laneId];
+  if (!tl) return;
+  const ids = mode === "start" ? [t.id] : [t.id].concat(Array.from(descendants(t.id)));
+  const orig = {};
+  ids.forEach(id => { const x = taskById(id); if (x) orig[id] = { start: x.start, end: x.end }; });
+  const arr = Object.values(orig);
+  let lo, hi;
+  if (mode === "move") {
+    lo = 1 - Math.min.apply(null, arr.map(a => a.start));
+    hi = ed.N - Math.max.apply(null, arr.map(a => a.end));
+  } else if (mode === "end") {
+    const desc = ids.filter(id => id !== t.id).map(id => orig[id]);
+    hi = ed.N - orig[t.id].end; lo = orig[t.id].start - orig[t.id].end;
+    if (desc.length) {
+      hi = Math.min(hi, ed.N - Math.max.apply(null, desc.map(a => a.end)));
+      lo = Math.max(lo, 1 - Math.min.apply(null, desc.map(a => a.start)));
+    }
+  } else { lo = 1 - orig[t.id].start; hi = orig[t.id].end - orig[t.id].start; }
+
+  dragRef = { mode: mode, root: t.id, orig: orig, weekPx: tl.getBoundingClientRect().width / ed.N,
+    startX: e.clientX, startY: e.clientY, lo: lo, hi: hi, targetLane: null, moved: false };
+  document.body.classList.add("dragging");
+}
+
+function applyDragVisual() {
+  const d = dragRef;
+  for (const id in d.orig) {
+    const t = taskById(id); const el = barEls[id];
+    if (!t || !el) continue;
+    el.style.left = pctL(t.start) + "%";
+    el.style.width = "calc(" + pctW(t.start, t.end) + "% - 6px)";
+  }
+}
+
+document.addEventListener("pointermove", e => {
+  const d = dragRef; if (!d) return;
+  const delta = clamp(Math.round((e.clientX - d.startX) / d.weekPx), d.lo, d.hi);
+  if (Math.abs(e.clientX - d.startX) > 3 || Math.abs(e.clientY - d.startY) > 3) d.moved = true;
+  ed.tasks = ed.tasks.map(t => {
+    const o = d.orig[t.id]; if (!o) return t;
+    if (d.mode === "move") return Object.assign({}, t, { start: o.start + delta, end: o.end + delta });
+    if (d.mode === "end") return t.id === d.root ? Object.assign({}, t, { end: o.end + delta }) : Object.assign({}, t, { start: o.start + delta, end: o.end + delta });
+    if (d.mode === "start") return Object.assign({}, t, { start: o.start + delta });
+    return t;
+  });
+  applyDragVisual();
+  if (d.mode === "move") {
+    const el = barEls[d.root];
+    if (el) { el.style.transform = "translateY(" + (e.clientY - d.startY) + "px)"; el.style.zIndex = "20"; }
+    let lid = null;
+    for (const k in laneEls) {
+      const r = laneEls[k].getBoundingClientRect();
+      if (e.clientY >= r.top && e.clientY <= r.bottom) { lid = k; break; }
+    }
+    d.targetLane = lid;
+    for (const k in laneEls) laneEls[k].style.background = (k === lid) ? (ed.lanes.find(l => l.id === k) || {}).soft || "" : "transparent";
+  }
+});
+
+document.addEventListener("pointerup", () => {
+  const d = dragRef; if (!d) return;
+  dragRef = null;
+  document.body.classList.remove("dragging");
+  for (const k in laneEls) laneEls[k].style.background = "transparent";
+  const el = barEls[d.root];
+  if (el) { el.style.transform = "none"; el.style.zIndex = ""; }
+  if (!d.moved) { layout(); return; }
+  if (d.mode === "move" && d.targetLane) {
+    ed.tasks = ed.tasks.map(t => (t.id === d.root && t.laneId !== d.targetLane) ? Object.assign({}, t, { laneId: d.targetLane }) : t);
+  }
+  renderGantt(); scheduleSave();
+});
+
+/* — дії над етапами / лініями — */
+function delTask(id) {
+  ed.tasks = ed.tasks.filter(t => t.id !== id).map(t => Object.assign({}, t, { deps: (t.deps || []).filter(d => d !== id) }));
+  if (ed.selected === id) ed.selected = null;
+  renderGantt(); scheduleSave();
+}
+function patchTask(id, p, quiet) {
+  ed.tasks = ed.tasks.map(t => t.id === id ? Object.assign({}, t, p) : t);
+  if (!quiet) renderGantt();
+  scheduleSave();
+}
+function addLane() {
+  const c = PALETTE[ed.lanes.length % PALETTE.length];
+  ed.lanes = ed.lanes.concat([Object.assign({ id: "L" + Date.now(), name: "Нова лінія" }, c)]);
+  renderGantt(); refreshLaneSelects(); scheduleSave();
+}
+function delLane(id) {
+  if (!confirm("Видалити лінію разом з її етапами?")) return;
+  const ts = ed.tasks.filter(t => t.laneId !== id);
+  ed.lanes = ed.lanes.filter(l => l.id !== id);
+  ed.tasks = ts.map(t => Object.assign({}, t, { deps: (t.deps || []).filter(d => ts.some(x => x.id === d)) }));
+  if (ed.form.laneId === id) ed.form.laneId = ed.lanes[0] ? ed.lanes[0].id : null;
+  renderGantt(); refreshLaneSelects(); scheduleSave();
+}
+function moveLane(idx, dir) {
+  const j = idx + dir; if (j < 0 || j >= ed.lanes.length) return;
+  const a = ed.lanes.slice(); const tmp = a[idx]; a[idx] = a[j]; a[j] = tmp;
+  ed.lanes = a; renderGantt(); scheduleSave();
+}
+
+/* — картка набутку — */
+function renderCard() {
+  const host = document.getElementById("cardHost");
+  if (!host) return;
+  host.replaceChildren();
+  const sel = ed.selected ? taskById(ed.selected) : null;
+  if (!sel) return;
+  const lane = ed.lanes.find(l => l.id === sel.laneId) || {};
+
+  const nameInp = h("input", { class: "inp", value: sel.name, style: { width: "100%" } });
+  nameInp.addEventListener("input", () => {
+    patchTask(sel.id, { name: nameInp.value }, true);
+    const el = barEls[sel.id];
+    if (el) { el.childNodes[1].textContent = nameInp.value; layout(); }
+  });
+
+  const laneSel = h("select", { class: "inp" });
+  ed.lanes.forEach(l => laneSel.appendChild(h("option", { value: l.id, selected: l.id === sel.laneId }, l.name)));
+  laneSel.addEventListener("change", () => patchTask(sel.id, { laneId: laneSel.value }));
+
+  const startInp = h("input", { class: "inp", type: "number", min: 1, max: ed.N, value: sel.start, style: { width: "90px" } });
+  startInp.addEventListener("change", () => {
+    const s = clamp(Number(startInp.value) || 1, 1, ed.N);
+    patchTask(sel.id, { start: s, end: Math.max(s, taskById(sel.id).end) });
+  });
+
+  const durInp = h("input", { class: "inp", type: "number", min: 1, value: sel.end - sel.start + 1, style: { width: "110px" } });
+  durInp.addEventListener("change", () => {
+    const d = Math.max(1, Number(durInp.value) || 1);
+    const cur = taskById(sel.id);
+    patchTask(sel.id, { end: clamp(cur.start + d - 1, cur.start, ed.N) });
+  });
+
+  const panel = h("div", { class: "panel noprint" },
+    h("div", { class: "head" },
+      h("span", { class: "pill", style: { background: lane.bar || "#374151" } }, sel.code),
+      h("span", { style: { fontSize: "13px", fontWeight: "800" } }, "Картка набутку"),
+      h("span", { style: { flex: "1" } }),
+      h("button", { class: "xbtn", style: { fontSize: "13px", color: "#dc2626" }, onclick: () => delTask(sel.id) }, "видалити"),
+      h("button", { class: "xbtn", style: { fontSize: "16px" }, onclick: () => { ed.selected = null; highlightSelection(); renderCard(); } }, "×")),
+    h("div", { class: "frow" },
+      field("Назва", nameInp, true),
+      field("Лінія", laneSel),
+      field("Старт (спринт)", startInp),
+      field("Тривалість (тижн.)", durInp)),
+    depField(sel));
+  host.appendChild(panel);
+}
+
+function field(cap, node, grow) {
+  return h("label", { class: "field" + (grow ? " grow" : "") }, h("span", { class: "cap" }, cap), node);
+}
+
+function depField(sel) {
+  const forbidden = new Set([sel.id].concat(sel.deps || [], Array.from(descendants(sel.id))));
+  const wrapEl = h("div", { style: { position: "relative" } });
+  wrapEl.appendChild(h("span", { class: "cap" }, "Залежить від (набутки-предки)"));
+
+  const box = h("div", { class: "depbox" });
+  (sel.deps || []).forEach(pid => {
+    const t = taskById(pid); if (!t) return;
+    box.appendChild(h("span", { class: "chip" },
+      h("b", { style: { color: "#475569" } }, t.code),
+      h("span", { class: "nm" }, t.name),
+      h("button", { class: "xbtn", style: { fontSize: "12px", padding: "0" },
+        onclick: () => { patchTask(sel.id, { deps: (taskById(sel.id).deps || []).filter(d => d !== pid) }); } }, "×")));
+  });
+
+  const q = h("input", { placeholder: (sel.deps || []).length ? "ще…" : "введи код або назву…" });
+  box.appendChild(q);
+  wrapEl.appendChild(box);
+
+  const dd = h("div", { class: "dropdown", style: { display: "none" } });
+  wrapEl.appendChild(dd);
+
+  const refresh = () => {
+    const ql = q.value.trim().toLowerCase();
+    const matches = ed.tasks.filter(t => !forbidden.has(t.id))
+      .filter(t => ql === "" || String(t.code).includes(ql) || t.name.toLowerCase().includes(ql)).slice(0, 8);
+    dd.replaceChildren();
+    if (matches.length === 0) {
+      if (ql === "") { dd.style.display = "none"; return; }
+      dd.appendChild(h("div", { style: { padding: "8px 10px", fontSize: "12px", color: "#9ca3af" } }, "Нічого не знайдено"));
+      dd.style.display = "block"; return;
+    }
+    matches.forEach(t => {
+      const it = h("div", { class: "it" }, h("b", null, t.code), h("span", null, t.name));
+      it.addEventListener("mousedown", e => {
+        e.preventDefault();
+        const cur = taskById(sel.id);
+        patchTask(sel.id, { deps: Array.from(new Set((cur.deps || []).concat([t.id]))) });
+      });
+      dd.appendChild(it);
+    });
+    dd.style.display = "block";
+  };
+  q.addEventListener("input", refresh);
+  q.addEventListener("focus", refresh);
+  q.addEventListener("blur", () => setTimeout(() => { dd.style.display = "none"; }, 150));
+  return wrapEl;
+}
+
+/* — швидке додавання — */
+let addLaneSel = null;
+function buildAddRow() {
+  addLaneSel = h("select", { class: "inp" });
+  const nameInp = h("input", { class: "inp", placeholder: "новий набуток…", style: { width: "100%" } });
+  const startInp = h("input", { class: "inp", type: "number", min: 1, value: 1, style: { width: "84px" } });
+  const durInp = h("input", { class: "inp", type: "number", min: 1, value: 1, style: { width: "100px" } });
+
+  const add = () => {
+    const s = clamp(Number(startInp.value) || 1, 1, ed.N);
+    const e = clamp(s + (Number(durInp.value) || 1) - 1, s, ed.N);
+    const laneId = ed.lanes.some(l => l.id === addLaneSel.value) ? addLaneSel.value : (ed.lanes[0] || {}).id;
+    if (!laneId) { alert("Спочатку додай хоча б одну лінію."); return; }
+    const id = "t" + Date.now();
+    ed.tasks = ed.tasks.concat([{ id: id, laneId: laneId, code: nextCode(ed.tasks), name: nameInp.value.trim() || "Новий етап", start: s, end: e, deps: [] }]);
+    nameInp.value = ""; ed.selected = id;
+    renderGantt(); scheduleSave();
+  };
+  nameInp.addEventListener("keydown", e => { if (e.key === "Enter") add(); });
+
+  const row = h("div", { class: "addrow noprint" },
+    field("Лінія", addLaneSel),
+    field("Назва етапу", nameInp, true),
+    field("Старт", startInp),
+    field("Тривалість", durInp),
+    h("button", { class: "primary", onclick: add }, "+ Додати етап"));
+  refreshLaneSelects();
+  return row;
+}
+function refreshLaneSelects() {
+  if (!addLaneSel || !ed) return;
+  const cur = addLaneSel.value;
+  addLaneSel.replaceChildren();
+  ed.lanes.forEach(l => addLaneSel.appendChild(h("option", { value: l.id }, l.name)));
+  if (ed.lanes.some(l => l.id === cur)) addLaneSel.value = cur;
+  else if (ed.lanes[0]) addLaneSel.value = ed.lanes[0].id;
+}
+
+/* — конфіг — */
+function toggleCfg() {
+  const host = document.getElementById("cfgHost");
+  if (!host) return;
+  if (host.firstChild) { host.replaceChildren(); return; }
+  const ta = h("textarea", { spellcheck: false }, JSON.stringify({ N: ed.N, start: ed.start, lanes: ed.lanes, tasks: ed.tasks }, null, 2));
+  const err = h("div", { class: "err", style: { display: "none" } });
+  const apply = () => {
+    try {
+      const o = JSON.parse(ta.value);
+      if (o.N) ed.N = o.N;
+      if (o.start) ed.start = o.start;
+      if (o.lanes) ed.lanes = o.lanes;
+      if (o.tasks) ed.tasks = o.tasks;
+      host.replaceChildren(); renderGantt(); refreshLaneSelects(); scheduleSave();
+    } catch (e) { err.textContent = "Невалідний JSON: " + e.message; err.style.display = "block"; }
+  };
+  host.appendChild(h("div", { class: "cfg noprint" },
+    h("div", { style: { fontSize: "12px", fontWeight: "700", marginBottom: "6px" } }, "Конфіг (JSON) — бекап стану"),
+    ta, err,
+    h("div", { style: { display: "flex", gap: "8px", marginTop: "8px" } },
+      h("button", { class: "btn", onclick: apply }, "Застосувати"),
+      h("button", { class: "btn", onclick: () => host.replaceChildren() }, "Закрити"))));
+}
+
+/* ═══════════ експорт PDF ═══════════ */
+function wrapLines(ctx, text, maxW) {
+  const words = String(text || "").split(/\s+/).filter(Boolean);
+  const lines = []; let cur = "";
+  for (const w of words) {
+    const test = cur ? cur + " " + w : w;
+    if (!cur || ctx.measureText(test).width <= maxW) cur = test;
+    else { lines.push(cur); cur = w; }
+  }
+  if (cur) lines.push(cur);
+  return lines.length ? lines : [""];
+}
+function roundRect(ctx, x, y, w, hh, r) {
+  r = Math.min(r, w / 2, hh / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + hh, r);
+  ctx.arcTo(x + w, y + hh, x, y + hh, r);
+  ctx.arcTo(x, y + hh, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function renderCanvas() {
+  const COL = 112, MB = 26, WB = 34, LH = 24, PADT = 8, G = 6, BARPADX = 8, LINEH = 15, PILL = 17, BARPADY = 5;
+  const NAMEFONT = "600 12px Montserrat, system-ui, sans-serif";
+  const W = ed.N * COL;
+  const meas = document.createElement("canvas").getContext("2d");
+  meas.font = NAMEFONT;
+  let totalH = MB + WB;
+  const LL = [];
+  for (const lane of ed.lanes) {
+    const sorted = ed.tasks.filter(t => t.laneId === lane.id).slice().sort((a, b) => a.start - b.start || a.end - b.end);
+    const rowsEnd = [], rowOf = {};
+    for (const t of sorted) { let r = rowsEnd.findIndex(e => t.start > e); if (r === -1) { r = rowsEnd.length; rowsEnd.push(t.end); } else rowsEnd[r] = t.end; rowOf[t.id] = r; }
+    const taskH = {}, taskLines = {};
+    for (const t of sorted) {
+      const bw = (t.end - t.start + 1) * COL - 8;
+      const lines = wrapLines(meas, t.name, Math.max(24, bw - BARPADX * 2));
+      taskLines[t.id] = lines;
+      taskH[t.id] = Math.max(26, BARPADY + PILL + lines.length * LINEH + BARPADY);
+    }
+    const rowH = [];
+    for (const t of sorted) { const r = rowOf[t.id]; rowH[r] = Math.max(rowH[r] || 0, taskH[t.id]); }
+    const rowTop = []; let acc = PADT;
+    for (let r = 0; r < rowH.length; r++) { rowTop[r] = acc; acc += rowH[r] + G; }
+    const height = Math.max(acc - G + PADT, 36);
+    LL.push({ lane: lane, list: sorted, rowOf: rowOf, rowTop: rowTop, taskH: taskH, taskLines: taskLines, height: height });
+    totalH += LH + height;
+  }
+  const scale = 2;
+  const cv = document.createElement("canvas"); cv.width = W * scale; cv.height = totalH * scale;
+  const ctx = cv.getContext("2d"); ctx.scale(scale, scale); ctx.textBaseline = "top";
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, W, totalH);
+
+  let mx = 0;
+  ed.monthSpans.forEach((m, idx) => {
+    const w = m.span * COL;
+    ctx.fillStyle = idx % 2 ? "#f3f4f6" : "#fafafa"; ctx.fillRect(mx, 0, w, MB);
+    if (idx) { ctx.strokeStyle = "#d1d5db"; ctx.beginPath(); ctx.moveTo(mx, 0); ctx.lineTo(mx, MB); ctx.stroke(); }
+    ctx.fillStyle = "#374151"; ctx.font = "700 12px Montserrat, sans-serif"; ctx.textAlign = "center";
+    ctx.fillText(m.month, mx + w / 2, MB / 2 - 7);
+    mx += w;
+  });
+  for (let i = 0; i < ed.N; i++) {
+    const wx = i * COL;
+    ctx.fillStyle = "#fafafa"; ctx.fillRect(wx, MB, COL, WB);
+    if (i) { ctx.strokeStyle = "#eef0f2"; ctx.beginPath(); ctx.moveTo(wx, MB); ctx.lineTo(wx, MB + WB); ctx.stroke(); }
+    ctx.fillStyle = "#374151"; ctx.font = "700 11px Montserrat, sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("С" + ed.weeks[i].i, wx + COL / 2, MB + 5);
+    ctx.fillStyle = "#9ca3af"; ctx.font = "500 9px Montserrat, sans-serif";
+    ctx.fillText(ed.weeks[i].dates, wx + COL / 2, MB + 19);
+  }
+  ctx.textAlign = "left";
+
+  let y = MB + WB;
+  for (const Lr of LL) {
+    ctx.fillStyle = Lr.lane.soft || "#f3f4f6"; ctx.fillRect(0, y, W, LH);
+    ctx.strokeStyle = "#e5e7eb"; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    ctx.fillStyle = Lr.lane.bar; roundRect(ctx, 10, y + (LH - 12) / 2, 12, 12, 3); ctx.fill();
+    ctx.fillStyle = Lr.lane.line; ctx.font = "800 12px Montserrat, sans-serif";
+    ctx.fillText(Lr.lane.name, 28, y + (LH - 12) / 2 - 1);
+    const cy = y + LH;
+    for (let i = 1; i < ed.N; i++) { const gx = i * COL; ctx.strokeStyle = "#f1f3f5"; ctx.beginPath(); ctx.moveTo(gx, cy); ctx.lineTo(gx, cy + Lr.height); ctx.stroke(); }
+    for (const t of Lr.list) {
+      const bx = (t.start - 1) * COL + 1, bw = (t.end - t.start + 1) * COL - 8;
+      const by = cy + Lr.rowTop[Lr.rowOf[t.id]], bh = Lr.taskH[t.id];
+      ctx.fillStyle = Lr.lane.bar; roundRect(ctx, bx, by, bw, bh, 6); ctx.fill();
+      ctx.fillStyle = Lr.lane.line; ctx.fillRect(bx, by, 3, bh);
+      ctx.font = "800 9px Montserrat, sans-serif";
+      const codeW = ctx.measureText(t.code).width + 8;
+      ctx.fillStyle = "rgba(255,255,255,.28)"; roundRect(ctx, bx + BARPADX, by + BARPADY, codeW, 13, 3); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.fillText(t.code, bx + BARPADX + 4, by + BARPADY + 2);
+      ctx.font = NAMEFONT; ctx.fillStyle = "#fff";
+      let ty = by + BARPADY + PILL;
+      for (const ln of Lr.taskLines[t.id]) { ctx.fillText(ln, bx + BARPADX, ty); ty += LINEH; }
+    }
+    y = cy + Lr.height;
+  }
+  return { canvas: cv, W: W, H: totalH };
+}
+function buildImagePDF(jpegBytes, pxW, pxH, ptW, ptH) {
+  const enc = new TextEncoder();
+  const parts = []; let len = 0; const off = [];
+  const push = d => { const b = typeof d === "string" ? enc.encode(d) : d; parts.push(b); len += b.length; };
+  const mark = () => off.push(len);
+  push("%PDF-1.3\n");
+  mark(); push("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+  mark(); push("2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n");
+  mark(); push("3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + ptW.toFixed(2) + " " + ptH.toFixed(2) + "] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>\nendobj\n");
+  mark(); push("4 0 obj\n<< /Type /XObject /Subtype /Image /Width " + pxW + " /Height " + pxH + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + jpegBytes.length + " >>\nstream\n");
+  push(jpegBytes); push("\nendstream\nendobj\n");
+  const content = "q\n" + ptW.toFixed(2) + " 0 0 " + ptH.toFixed(2) + " 0 0 cm\n/Im0 Do\nQ\n";
+  mark(); push("5 0 obj\n<< /Length " + enc.encode(content).length + " >>\nstream\n" + content + "endstream\nendobj\n");
+  const xrefOff = len;
+  let xref = "xref\n0 6\n0000000000 65535 f \n";
+  for (const o of off) xref += String(o).padStart(10, "0") + " 00000 n \n";
+  push(xref);
+  push("trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n" + xrefOff + "\n%%EOF");
+  const out = new Uint8Array(len); let p = 0;
+  for (const b of parts) { out.set(b, p); p += b.length; }
+  return out;
+}
+async function exportPDF(btn) {
+  btn.disabled = true; btn.textContent = "Готую PDF…";
+  try {
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) {} }
+    await new Promise(r => setTimeout(r, 40));
+    const res = renderCanvas();
+    const dataUrl = res.canvas.toDataURL("image/jpeg", 0.92);
+    const bin = atob(dataUrl.split(",")[1]);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const pdf = buildImagePDF(bytes, res.canvas.width, res.canvas.height, res.W * 0.75, res.H * 0.75);
+    const blob = new Blob([pdf], { type: "application/pdf" });
+    const filename = "roadmap_" + new Date().toISOString().slice(0, 10) + ".pdf";
+
+    let saver = null;
+    try { if (window.claude && typeof window.claude.use === "function") saver = await window.claude.use("downloads"); } catch (e) { saver = null; }
+
+    if (saver && typeof saver.save === "function") {
+      try { await saver.save({ filename: filename, data: blob }); }
+      catch (err) { if (!err || err.code !== "declined") throw err; }
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 6000);
+    }
+  } catch (e) {
+    alert("Не вдалося згенерувати PDF: " + (e && (e.message || e.code) ? (e.message || e.code) : e));
+  } finally {
+    btn.disabled = false; btn.textContent = "Експорт PDF";
+  }
+}
+
+boot();
+})();
+</script>
+
+</body>
+</html>
